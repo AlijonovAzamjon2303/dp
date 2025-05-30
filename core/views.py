@@ -3,7 +3,9 @@ from .models import Product, Sale, Shop
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
 from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def sell_product(request):
     message = ""
     products = Product.objects.all()
@@ -30,6 +32,7 @@ def sell_product(request):
 
     return render(request, 'core/sell.html', {'products': products, 'message': message})
 
+@login_required
 def monitoring(request):
     shops = Shop.objects.all()
     shop_stats = []
