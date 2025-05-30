@@ -2,21 +2,87 @@
 <html>
 <head>
     <title>Sotuv sahifasi</title>
+    <script>
+        let cart = [];
+
+        function addToCart() {
+            const productSelect = document.getElementById('product-select');
+            const quantityInput = document.getElementById('quantity-input');
+
+            const productId = productSelect.value;
+            const productName = productSelect.options[productSelect.selectedIndex].text;
+            const quantity = parseInt(quantityInput.value);
+
+            if (quantity <= 0) {
+                alert('Iltimos, 1 yoki undan ko\'p mahsulot kiriting');
+                return;
+            }
+
+            // Check if product already in cart
+            const existing = cart.find(item => item.product_id === productId);
+            if (existing) {
+                existing.quantity += quantity;
+            } else {
+                cart.push({product_id: productId, product_name: productName, quantity: quantity});
+            }
+
+            quantityInput.value = '';
+            renderCart();
+        }
+
+        function renderCart() {
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${item.product_name} - ${item.quantity} dona`;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'O\'chirish';
+                removeBtn.onclick = () => {
+                    cart.splice(index, 1);
+                    renderCart();
+                };
+
+                li.appendChild(removeBtn);
+                cartList.appendChild(li);
+            });
+
+            document.getElementById('cart-data').value = JSON.stringify(cart);
+        }
+
+        function validateAndSubmit() {
+            if (cart.length === 0) {
+                alert('Iltimos, hech bo\'lmasa bitta mahsulot qo\'shing');
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <h1>Mahsulot sotish</h1>
-    <form method="post">
+    <form method="post" onsubmit="return validateAndSubmit()">
         {% csrf_token %}
         <label>Mahsulot:</label>
-        <select name="product_id">
+        <select id="product-select">
             {% for product in products %}
             <option value="{{ product.id }}">{{ product.name }} ({{ product.quantity }} dona) - {{ product.price }} so'm</option>
             {% endfor %}
-        </select><br><br>
+        </select>
         <label>Soni:</label>
-        <input type="number" name="quantity" required><br><br>
+        <input type="number" id="quantity-input" min="1">
+        <button type="button" onclick="addToCart()">Qo'shish</button>
+
+        <h3>Savat:</h3>
+        <ul id="cart-list"></ul>
+
+        <input type="hidden" name="cart_data" id="cart-data">
+
         <button type="submit">Sotish</button>
     </form>
+
     {% if message %}
     <p style="color:red;">{{ message }}</p>
     {% endif %}

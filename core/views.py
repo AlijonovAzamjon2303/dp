@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Sale, Shop
 from django.utils import timezone
-from decimal import Decimal, InvalidOperation
-from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
+import json
+
+@login_required
+def home(request):
+    return render(request, 'home.html')
 
 @login_required
 def sell_product(request):
@@ -11,12 +14,37 @@ def sell_product(request):
     products = Product.objects.all()
 
     if request.method == 'POST':
-        product_id = request.POST.get('product_id')
-        quantity = int(request.POST.get('quantity'))
+        cart_data = request.POST.get('cart_data')
+        if not cart_data:
+            message = "Savatingiz bo'sh."
+            return render(request, 'core/sell.html', {'products': products, 'message': message})
 
-        product = get_object_or_404(Product, id=product_id)
+        try:
+            cart = json.loads(cart_data)
+        except json.JSONDecodeError:
+            message = "Noto'g'ri ma'lumot yuborildi."
+            return render(request, 'core/sell.html', {'products': products, 'message': message})
 
-        if product.quantity >= quantity:
+        sales = []
+        total = 0
+        for item in cart:
+            product_id = item.get('product_id')
+            quantity = item.get('quantity', 0)
+
+            product = get_object_or_404(Product, id=product_id)
+            total += product.price * quantity
+
+            if product.quantity < quantity:
+                message = f"Mahsulot '{product.name}' dan omborda yetarli miqdor yo'q."
+                return render(request, 'core/sell.html', {'products': products, 'message': message})
+
+
+        # Hammasi yaxshi, mahsulotlarni kamaytirish va Sale yozish
+        for item in cart:
+            product_id = item.get('product_id')
+            quantity = item.get('quantity', 0)
+
+            product = Product.objects.get(id=product_id)
             product.quantity -= quantity
             product.save()
 
@@ -25,10 +53,9 @@ def sell_product(request):
                 quantity_sold=quantity,
                 sold_at=timezone.now()
             )
+            sales.append(sale)
 
-            return render(request, 'core/receipt.html', {'sale': sale})
-        else:
-            message = "Omborda yetarli mahsulot mavjud emas."
+        return render(request, 'core/receipt.html', {'sales': sales, 'total':total})
 
     return render(request, 'core/sell.html', {'products': products, 'message': message})
 

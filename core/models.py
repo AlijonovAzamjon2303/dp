@@ -22,6 +22,7 @@ class Sale(models.Model):
     quantity_sold = models.PositiveIntegerField()
     sold_at = models.DateTimeField(auto_now_add=True)
 
+    @property
     def total_price(self):
         return self.product.price * self.quantity_sold
 

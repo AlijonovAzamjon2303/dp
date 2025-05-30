@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Chek</title>
 </head>
 <body>
-    <h1>Chek</h1>
-    <p>Mahsulot: {{ sale.product.name }}</p>
-    <p>Soni: {{ sale.quantity_sold }}</p>
-    <p>Narxi: {{ sale.product.price }} so'm</p>
-    <p>Umumiy: {{ sale.total_price }} so'm</p>
-    <p>Sana: {{ sale.sold_at }}</p>
-    <a href="/sell/">Yana sotish</a>
+    <h1>🧾 Chek</h1>
+
+    {% if sales %}
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Mahsulot nomi</th>
+                    <th>Soni</th>
+                    <th>Bir dona narxi (so'm)</th>
+                    <th>Umumiy narx (so'm)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.product.name }}</td>
+                        <td>{{ sale.quantity_sold }}</td>
+                        <td>{{ sale.product.price }}</td>
+                        <td>{{ sale.total_price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>🔢 Jami summa: {{ total }} so‘m</h3>
+
+        <p><strong>Sana:</strong> {{ sales.0.sold_at }}</p>
+    {% else %}
+        <p>Savdo ma'lumotlari topilmadi.</p>
+    {% endif %}
+
+    <br>
+    <a href="{% url 'sell' %}">🔁 Yana sotish</a>
 </body>
 </html>

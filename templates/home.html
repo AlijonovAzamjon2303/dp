@@ -1,0 +1,18 @@
+{% if user.is_authenticated %}
+    <p>Xush kelibsiz, {{ user.username }}!</p>
+    <ul>
+        <li><a href="{% url 'sell' %}">🛒 Mahsulot sotish</a></li>
+        <li><a href="{% url 'monitoring' %}">📊 Monitoring sahifa</a></li>
+        <li>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; color:blue; text-decoration:underline; cursor:pointer; padding:0; font-size:1em;">
+                    🚪 Chiqish
+                </button>
+            </form>
+        </li>
+    </ul>
+{% else %}
+    <p>Siz tizimga kirmagansiz.</p>
+    <a href="{% url 'login' %}">🔐 Login</a>
+{% endif %}
