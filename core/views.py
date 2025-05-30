@@ -11,7 +11,12 @@ def home(request):
 @login_required
 def sell_product(request):
     message = ""
-    products = Product.objects.all()
+
+    # Foydalanuvchiga tegishli do'konni olish
+    shop = get_object_or_404(Shop, user=request.user)
+
+    # Faqat shu do'kondagi mahsulotlarni olish
+    products = Product.objects.filter(shop=shop)
 
     if request.method == 'POST':
         cart_data = request.POST.get('cart_data')
@@ -31,7 +36,8 @@ def sell_product(request):
             product_id = item.get('product_id')
             quantity = item.get('quantity', 0)
 
-            product = get_object_or_404(Product, id=product_id)
+            # Mahsulotni faqat hozirgi do'kon ichidan qidiramiz
+            product = get_object_or_404(Product, id=product_id, shop=shop)
             total += product.price * quantity
 
             if product.quantity < quantity:
@@ -44,7 +50,7 @@ def sell_product(request):
             product_id = item.get('product_id')
             quantity = item.get('quantity', 0)
 
-            product = Product.objects.get(id=product_id)
+            product = Product.objects.get(id=product_id, shop=shop)
             product.quantity -= quantity
             product.save()
 
@@ -61,50 +67,46 @@ def sell_product(request):
 
 @login_required
 def monitoring(request):
-    shops = Shop.objects.all()
-    shop_stats = []
+    # Foydalanuvchiga tegishli do'konni olish, agar do'kon bo'lmasa 404 chiqarish
+    shop = get_object_or_404(Shop, user=request.user)
 
-    for shop in shops:
-        products = shop.product_set.all()
-        total_sales = 0
-        total_income = 0
-        remaining_products = []
-        sold_products = []
+    products = shop.product_set.all()
+    total_sales = 0
+    total_income = 0
+    remaining_products = []
+    sold_products = []
 
-        for product in products:
-            sales = product.sale_set.values_list('quantity_sold', flat=True)
-            sold = sum(s or 0 for s in sales)
-            income = sold * product.price
-            total_sales += sold
-            total_income += income
+    for product in products:
+        sales = product.sale_set.values_list('quantity_sold', flat=True)
+        sold = sum(s or 0 for s in sales)
+        income = sold * product.price
+        total_sales += sold
+        total_income += income
 
-            remaining_products.append({
-                'name': product.name,
-                'quantity': product.quantity
-            })
-
-            sold_products.append({
-                'name': product.name,
-                'quantity': sold
-            })
-
-        # Labels va data ni JSON sifatida json.dumps bilan yuborish tavsiya qilinadi,
-        # ammo agar |safe filter ishlayotgan bo'lsa, shunday ham bo'ladi.
-
-        shop_stats.append({
-            'shop': shop.name,
-            'total_sales': total_sales,
-            'total_income': total_income,
-            'labels_remaining': [p['name'] for p in remaining_products],
-            'data_remaining': [p['quantity'] for p in remaining_products],
-            'labels_sold': [p['name'] for p in sold_products],
-            'data_sold': [p['quantity'] for p in sold_products],
-            'chart_id_remaining': f"chart_remaining_{shop.id}",
-            'chart_id_sold': f"chart_sold_{shop.id}",
+        remaining_products.append({
+            'name': product.name,
+            'quantity': product.quantity
         })
 
+        sold_products.append({
+            'name': product.name,
+            'quantity': sold
+        })
+
+    shop_stats = {
+        'shop': shop.name,
+        'total_sales': total_sales,
+        'total_income': total_income,
+        'labels_remaining': [p['name'] for p in remaining_products],
+        'data_remaining': [p['quantity'] for p in remaining_products],
+        'labels_sold': [p['name'] for p in sold_products],
+        'data_sold': [p['quantity'] for p in sold_products],
+        'chart_id_remaining': f"chart_remaining_{shop.id}",
+        'chart_id_sold': f"chart_sold_{shop.id}",
+    }
+
     return render(request, 'core/monitoring.html', {
-        'shop_stats': shop_stats,
+        'shop_stats': [shop_stats],  # ro'yxat qilib yuboryapmiz, chunki template for loop ishlatadi
     })
 
 @login_required
