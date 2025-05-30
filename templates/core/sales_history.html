@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Sotuvlar Tarixi</title>
+    <style>
+        /* Oddiy styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: left;
+        }
+        tr:hover {
+            background-color: #eef;
+            cursor: pointer;
+        }
+        .details {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <nav style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <a href="{% url 'sell' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🛒 Sotish</a>
+        <a href="{% url 'monitoring' %}" style="text-decoration:none; color:#2a7ae2; font-weight:600;">📊 Monitoring</a>
+        <a href="{% url 'history' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🏠 Tarix</a>
+    </nav>
+    <h1>Sotuvlar Tarixi</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mahsulot nomi</th>
+                <th>Soni</th>
+                <th>Sotilgan vaqt</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr class="sale-row" data-sale-id="{{ forloop.counter }}">
+                <td>{{ sale.product.name }}</td>
+                <td>{{ sale.quantity_sold }}</td>
+                <td>{{ sale.sold_at }}</td>
+            </tr>
+            <tr class="details" id="details-{{ forloop.counter }}">
+                <td colspan="3">
+                    <b>Mahsulot narxi:</b> {{ sale.product.price }} <br/>
+                    <b>Jami summa:</b> {{ sale.total_price }} <br/>
+                    <b>Sotuv vaqti:</b> {{ sale.sold_at }} <br/>
+                    <!-- Qo'shimcha ma'lumotlar bo'lsa qo'shishingiz mumkin -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.querySelectorAll('.sale-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const id = row.getAttribute('data-sale-id');
+                const detailRow = document.getElementById('details-' + id);
+                if (detailRow.style.display === 'table-row') {
+                    detailRow.style.display = 'none';
+                } else {
+                    // Oldin barcha detailslarni yopamiz
+                    document.querySelectorAll('.details').forEach(d => d.style.display = 'none');
+                    detailRow.style.display = 'table-row';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -107,3 +107,8 @@ def monitoring(request):
     return render(request, 'core/monitoring.html', {
         'shop_stats': shop_stats,
     })
+
+@login_required
+def sales_history(request):
+    sales = Sale.objects.select_related('product').order_by('-sold_at')
+    return render(request, 'core/sales_history.html', {'sales': sales})

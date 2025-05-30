@@ -5,6 +5,11 @@
     <title>Chek</title>
 </head>
 <body>
+    <nav style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <a href="{% url 'sell' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🛒 Sotish</a>
+        <a href="{% url 'monitoring' %}" style="text-decoration:none; color:#2a7ae2; font-weight:600;">📊 Monitoring</a>
+        <a href="{% url 'history' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🏠 Tarix</a>
+    </nav>
     <h1>🧾 Chek</h1>
 
     {% if sales %}

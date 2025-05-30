@@ -1,18 +1,83 @@
-{% if user.is_authenticated %}
-    <p>Xush kelibsiz, {{ user.username }}!</p>
-    <ul>
-        <li><a href="{% url 'sell' %}">🛒 Mahsulot sotish</a></li>
-        <li><a href="{% url 'monitoring' %}">📊 Monitoring sahifa</a></li>
-        <li>
-            <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" style="background:none; border:none; color:blue; text-decoration:underline; cursor:pointer; padding:0; font-size:1em;">
-                    🚪 Chiqish
-                </button>
-            </form>
-        </li>
-    </ul>
-{% else %}
-    <p>Siz tizimga kirmagansiz.</p>
-    <a href="{% url 'login' %}">🔐 Login</a>
-{% endif %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      color: #333;
+      margin: 0;
+      padding: 40px;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      margin-bottom: 15px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #2a7ae2;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #145dbf;
+    }
+
+    form button {
+      background: none;
+      border: none;
+      color: #e02f44;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+      font-size: 1em;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    form button:hover {
+      color: #b02434;
+    }
+
+    ul li:last-child {
+      display: inline;
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  {% if user.is_authenticated %}
+      <p>Xush kelibsiz, {{ user.username }}!</p>
+      <ul>
+          <li><a href="{% url 'sell' %}">🛒 Mahsulot sotish</a></li>
+          <li><a href="{% url 'monitoring' %}">📊 Monitoring sahifa</a></li>
+          <li><a href="{% url 'history' %}">📜 Sotuvlar tarixi</a></li>
+          <li>
+              <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit">
+                      🚪 Chiqish
+                  </button>
+              </form>
+          </li>
+      </ul>
+  {% else %}
+      <p>Siz tizimga kirmagansiz.</p>
+      <a href="{% url 'login' %}">🔐 Login</a>
+  {% endif %}
+</body>
+</html>
