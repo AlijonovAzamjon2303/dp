@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monitoring</title>
+</head>
+<body>
+    <h1>Monitoring</h1>
+    {% for shop in shop_stats %}
+        <h2>Do'kon: {{ shop.shop }}</h2>
+        <p>Jami sotilgan mahsulotlar: {{ shop.total_sales }}</p>
+        <p>Jami daromad: {{ shop.total_income }} so'm</p>
+        <h3>Qolgan mahsulotlar:</h3>
+        <ul>
+            {% for p in shop.products %}
+                <li>{{ p.name }} - {{ p.quantity }} dona</li>
+            {% endfor %}
+        </ul>
+        <hr>
+    {% endfor %}
+</body>
+</html>
