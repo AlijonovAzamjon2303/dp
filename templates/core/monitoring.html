@@ -1,18 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Monitoring</title>
+    <title>Do‘konlar Monitoring</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Monitoring - {{ shop }}</h1>
-    <p>Jami sotilgan mahsulotlar: {{ total_sales }}</p>
-    <p>Jami daromad: {{ total_income }} so'm</p>
-    <h3>Qolgan mahsulotlar:</h3>
-    <ul>
-        {% for p in products %}
-            <li>{{ p.name }} - {{ p.quantity }} dona</li>
-        {% endfor %}
-    </ul>
+    <h1>Do‘konlar Monitoring</h1>
+
+    {% for stat in shop_stats %}
+        <hr>
+        <h2>{{ stat.shop }}</h2>
+        <p>Jami sotilgan mahsulotlar: {{ stat.total_sales }}</p>
+        <p>Jami daromad: {{ stat.total_income|floatformat:2 }} so'm</p>
+
+        <h3>📊 Qolgan mahsulotlar soni</h3>
+        <canvas id="{{ stat.chart_id }}" width="400" height="200"></canvas>
+
+        <script>
+            const ctx{{ forloop.counter }} = document.getElementById('{{ stat.chart_id }}').getContext('2d');
+            new Chart(ctx{{ forloop.counter }}, {
+                type: 'bar',
+                data: {
+                    labels: {{ stat.labels|safe }},
+                    datasets: [{
+                        label: 'Mahsulotlar soni (dona)',
+                        data: {{ stat.data|safe }},
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Soni'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    {% endfor %}
+
+    <br>
     <a href="{% url 'logout' %}">Chiqish</a>
 </body>
 </html>

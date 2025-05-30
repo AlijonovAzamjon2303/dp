@@ -38,20 +38,15 @@ def monitoring(request):
     shop_stats = []
 
     for shop in shops:
+        products = shop.product_set.all()
         total_sales = 0
-        total_income = Decimal('0.00')
+        total_income = 0
         remaining_products = []
 
-        for product in shop.product_set.all():
-            sold_data = product.sale_set.aggregate(total=Sum('quantity_sold'))
-            sold = sold_data['total'] or 0
-
-            try:
-                price = Decimal(product.price)
-            except (InvalidOperation, TypeError, ValueError):
-                price = Decimal('0.00')
-
-            income = Decimal(sold) * price
+        for product in products:
+            sales = product.sale_set.values_list('quantity_sold', flat=True)
+            sold = sum(s or 0 for s in sales)
+            income = sold * product.price
             total_sales += sold
             total_income += income
 
@@ -60,11 +55,18 @@ def monitoring(request):
                 'quantity': product.quantity
             })
 
+        labels = [p['name'] for p in remaining_products]
+        data = [p['quantity'] for p in remaining_products]
+
         shop_stats.append({
             'shop': shop.name,
             'total_sales': total_sales,
-            'total_income': round(total_income, 2),
-            'products': remaining_products
+            'total_income': total_income,
+            'labels': labels,
+            'data': data,
+            'chart_id': f"chart_{shop.id}"
         })
 
-    return render(request, 'core/monitoring.html', {'shop_stats': shop_stats})
+    return render(request, 'core/monitoring.html', {
+        'shop_stats': shop_stats,
+    })
