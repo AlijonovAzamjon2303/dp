@@ -60,6 +60,7 @@ def sell_product(request):
     return render(request, 'core/sell.html', {'products': products, 'message': message})
 
 @login_required
+@login_required
 def monitoring(request):
     shops = Shop.objects.all()
     shop_stats = []
@@ -69,6 +70,7 @@ def monitoring(request):
         total_sales = 0
         total_income = 0
         remaining_products = []
+        sold_products = []
 
         for product in products:
             sales = product.sale_set.values_list('quantity_sold', flat=True)
@@ -82,16 +84,24 @@ def monitoring(request):
                 'quantity': product.quantity
             })
 
-        labels = [p['name'] for p in remaining_products]
-        data = [p['quantity'] for p in remaining_products]
+            sold_products.append({
+                'name': product.name,
+                'quantity': sold
+            })
+
+        # Labels va data ni JSON sifatida json.dumps bilan yuborish tavsiya qilinadi,
+        # ammo agar |safe filter ishlayotgan bo'lsa, shunday ham bo'ladi.
 
         shop_stats.append({
             'shop': shop.name,
             'total_sales': total_sales,
             'total_income': total_income,
-            'labels': labels,
-            'data': data,
-            'chart_id': f"chart_{shop.id}"
+            'labels_remaining': [p['name'] for p in remaining_products],
+            'data_remaining': [p['quantity'] for p in remaining_products],
+            'labels_sold': [p['name'] for p in sold_products],
+            'data_sold': [p['quantity'] for p in sold_products],
+            'chart_id_remaining': f"chart_remaining_{shop.id}",
+            'chart_id_sold': f"chart_sold_{shop.id}",
         })
 
     return render(request, 'core/monitoring.html', {

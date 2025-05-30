@@ -5,6 +5,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
+
     <h1>Do‘konlar Monitoring</h1>
 
     {% for stat in shop_stats %}
@@ -14,19 +16,51 @@
         <p>Jami daromad: {{ stat.total_income|floatformat:2 }} so'm</p>
 
         <h3>📊 Qolgan mahsulotlar soni</h3>
-        <canvas id="{{ stat.chart_id }}" width="400" height="200"></canvas>
+        <canvas id="{{ stat.chart_id_remaining }}" width="400" height="200"></canvas>
+
+        <h3>📊 Sotilgan mahsulotlar soni</h3>
+        <canvas id="{{ stat.chart_id_sold }}" width="400" height="200"></canvas>
 
         <script>
-            const ctx{{ forloop.counter }} = document.getElementById('{{ stat.chart_id }}').getContext('2d');
-            new Chart(ctx{{ forloop.counter }}, {
+            // Qolgan mahsulotlar soni diagrammasi
+            const ctxRemaining{{ forloop.counter }} = document.getElementById('{{ stat.chart_id_remaining }}').getContext('2d');
+            new Chart(ctxRemaining{{ forloop.counter }}, {
                 type: 'bar',
                 data: {
-                    labels: {{ stat.labels|safe }},
+                    labels: {{ stat.labels_remaining|safe }},
                     datasets: [{
-                        label: 'Mahsulotlar soni (dona)',
-                        data: {{ stat.data|safe }},
+                        label: 'Mahsulotlar soni (dona) - Qolgan',
+                        data: {{ stat.data_remaining|safe }},
                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
                         borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Soni'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Sotilgan mahsulotlar soni diagrammasi
+            const ctxSold{{ forloop.counter }} = document.getElementById('{{ stat.chart_id_sold }}').getContext('2d');
+            new Chart(ctxSold{{ forloop.counter }}, {
+                type: 'bar',
+                data: {
+                    labels: {{ stat.labels_sold|safe }},
+                    datasets: [{
+                        label: 'Mahsulotlar soni (dona) - Sotilgan',
+                        data: {{ stat.data_sold|safe }},
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
                     }]
                 },
@@ -47,6 +81,21 @@
     {% endfor %}
 
     <br>
-    <a href="{% url 'logout' %}">Chiqish</a>
+    {% if user.is_authenticated %}
+    <p>{{ user.username }}!</p>
+    <ul>
+        <li>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; color:blue; text-decoration:underline; cursor:pointer; padding:0; font-size:1em;">
+                    🚪 Chiqish
+                </button>
+            </form>
+        </li>
+    </ul>
+{% else %}
+    <p>Siz tizimga kirmagansiz.</p>
+    <a href="{% url 'login' %}">🔐 Login</a>
+{% endif %}
 </body>
 </html>
