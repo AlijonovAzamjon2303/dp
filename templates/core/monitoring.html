@@ -3,13 +3,139 @@
 <head>
     <title>Do‘konlar Monitoring</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Umumiy sahifa uslubi */
+        body {
+            background: linear-gradient(135deg, #f0f4ff, #d9e4ff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px 40px;
+            color: #333;
+        }
+
+        /* Navbar */
+        nav {
+            background-color: #ffffffcc; /* oq va biroz shaffof */
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        nav a {
+            margin-right: 25px;
+            text-decoration: none;
+            color: #2a7ae2;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #1a4db7;
+            text-decoration: underline;
+        }
+
+        /* Sarlavhalar */
+        h1 {
+            text-align: center;
+            color: #1a3e7c;
+            margin-bottom: 40px;
+            font-size: 2.8em;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #154c9a;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2a7ae2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Matnlar */
+        p {
+            font-size: 1.1em;
+            margin: 5px 0 10px 0;
+        }
+
+        /* Chart container styling */
+        canvas {
+            background: #ffffffdd;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(42, 122, 226, 0.2);
+            margin-bottom: 35px;
+            max-width: 100%;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #d0d9f3;
+            margin: 40px 0 20px 0;
+        }
+
+        /* Foydalanuvchi paneli */
+        p, ul {
+            font-size: 1.1em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        button {
+            font-family: inherit;
+            background:none;
+            border:none;
+            color:#2a7ae2;
+            text-decoration:underline;
+            cursor:pointer;
+            padding:0;
+            font-size:1em;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        button:hover {
+            color: #1a4db7;
+        }
+
+        /* Link login uchun */
+        a {
+            color: #2a7ae2;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #1a4db7;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            nav a {
+                font-size: 1em;
+                margin-right: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <nav style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <a href="{% url 'sell' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🛒 Sotish</a>
-        <a href="{% url 'monitoring' %}" style="text-decoration:none; color:#2a7ae2; font-weight:600;">📊 Monitoring</a>
-        <a href="{% url 'history' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🏠 Tarix</a>
+    <nav>
+        <a href="{% url 'sell' %}">🛒 Sotish</a>
+        <a href="{% url 'monitoring' %}">📊 Monitoring</a>
+        <a href="{% url 'history' %}">🏠 Tarix</a>
     </nav>
     <h1>Do‘konlar Monitoring</h1>
 
@@ -91,15 +217,15 @@
         <li>
             <form method="post" action="{% url 'logout' %}" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" style="background:none; border:none; color:blue; text-decoration:underline; cursor:pointer; padding:0; font-size:1em;">
+                <button type="submit">
                     🚪 Chiqish
                 </button>
             </form>
         </li>
     </ul>
-{% else %}
+    {% else %}
     <p>Siz tizimga kirmagansiz.</p>
     <a href="{% url 'login' %}">🔐 Login</a>
-{% endif %}
+    {% endif %}
 </body>
 </html>

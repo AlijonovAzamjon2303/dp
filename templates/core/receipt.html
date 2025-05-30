@@ -3,17 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <title>Chek</title>
+    <style>
+        /* Umumiy uslub */
+        body {
+            background: linear-gradient(135deg, #e0e7ff, #f0f4ff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 30px 40px;
+            color: #2c3e50;
+        }
+
+        /* Navbar uslubi */
+        nav {
+            margin-bottom: 25px;
+        }
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #2a7ae2;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #1a4db7;
+            text-decoration: underline;
+        }
+
+        /* Sarlavha */
+        h1 {
+            font-size: 2.6em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #154c9a;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Jadval uslubi */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffffdd;
+            box-shadow: 0 4px 12px rgba(42, 122, 226, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #d0d9f3;
+        }
+        thead th {
+            background-color: #2a7ae2;
+            color: white;
+            font-weight: 700;
+        }
+        tbody tr:hover {
+            background-color: #e3f0ff;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Jami summa */
+        h3 {
+            text-align: right;
+            color: #154c9a;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        /* Sana */
+        p {
+            font-size: 1.1em;
+            color: #444;
+            text-align: right;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        /* Yana sotish linki */
+        a {
+            display: inline-block;
+            font-weight: 600;
+            color: #2a7ae2;
+            text-decoration: none;
+            font-size: 1.1em;
+            padding: 8px 18px;
+            border: 2px solid #2a7ae2;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        a:hover {
+            background-color: #2a7ae2;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Xatolik holati */
+        p.error {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d9534f;
+            margin-top: 40px;
+        }
+
+        /* Responsive uchun */
+        @media (max-width: 600px) {
+            body {
+                margin: 20px 15px;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tbody tr {
+                margin-bottom: 20px;
+                background: #f9f9f9;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(42,122,226,0.1);
+                padding: 15px;
+            }
+            tbody td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                text-align: left;
+                font-size: 1em;
+            }
+            tbody td:before {
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                width: 45%;
+                white-space: nowrap;
+                font-weight: 600;
+                color: #2a7ae2;
+            }
+            tbody td:nth-of-type(1):before { content: "Mahsulot nomi"; }
+            tbody td:nth-of-type(2):before { content: "Soni"; }
+            tbody td:nth-of-type(3):before { content: "Bir dona narxi (so'm)"; }
+            tbody td:nth-of-type(4):before { content: "Umumiy narx (so'm)"; }
+
+            h3, p {
+                text-align: left;
+            }
+
+            nav a {
+                display: block;
+                margin-bottom: 10px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <a href="{% url 'sell' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🛒 Sotish</a>
-        <a href="{% url 'monitoring' %}" style="text-decoration:none; color:#2a7ae2; font-weight:600;">📊 Monitoring</a>
-        <a href="{% url 'history' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🏠 Tarix</a>
+    <nav>
+        <a href="{% url 'sell' %}">🛒 Sotish</a>
+        <a href="{% url 'monitoring' %}">📊 Monitoring</a>
+        <a href="{% url 'history' %}">🏠 Tarix</a>
     </nav>
+
     <h1>🧾 Chek</h1>
 
     {% if sales %}
-        <table border="1" cellpadding="8" cellspacing="0">
+        <table>
             <thead>
                 <tr>
                     <th>Mahsulot nomi</th>
@@ -24,24 +185,22 @@
             </thead>
             <tbody>
                 {% for sale in sales %}
-                    <tr>
-                        <td>{{ sale.product.name }}</td>
-                        <td>{{ sale.quantity_sold }}</td>
-                        <td>{{ sale.product.price }}</td>
-                        <td>{{ sale.total_price }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ sale.product.name }}</td>
+                    <td>{{ sale.quantity_sold }}</td>
+                    <td>{{ sale.product.price }}</td>
+                    <td>{{ sale.total_price }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
 
         <h3>🔢 Jami summa: {{ total }} so‘m</h3>
-
         <p><strong>Sana:</strong> {{ sales.0.sold_at }}</p>
     {% else %}
-        <p>Savdo ma'lumotlari topilmadi.</p>
+        <p class="error">Savdo ma'lumotlari topilmadi.</p>
     {% endif %}
 
-    <br>
     <a href="{% url 'sell' %}">🔁 Yana sotish</a>
 </body>
 </html>

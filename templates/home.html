@@ -6,30 +6,55 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      color: #333;
+      background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+      color: #222;
       margin: 0;
       padding: 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
 
     p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
+      font-size: 1.4em;
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
     }
 
     ul {
       list-style: none;
       padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      justify-content: center;
     }
 
     ul li {
-      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      padding: 15px 25px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    ul li:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
     }
 
     a {
       text-decoration: none;
       color: #2a7ae2;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       transition: color 0.3s ease;
     }
 
@@ -38,24 +63,35 @@
     }
 
     form button {
-      background: none;
+      background: #e02f44;
       border: none;
-      color: #e02f44;
-      text-decoration: underline;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1em;
+      padding: 8px 18px;
+      border-radius: 8px;
       cursor: pointer;
-      padding: 0;
-      font-size: 1em;
-      font-weight: 600;
-      transition: color 0.3s ease;
+      transition: background-color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     form button:hover {
-      color: #b02434;
+      background: #b02434;
     }
 
-    ul li:last-child {
-      display: inline;
-      margin-left: 20px;
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      ul {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      ul li {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -67,16 +103,14 @@
           <li><a href="{% url 'monitoring' %}">📊 Monitoring sahifa</a></li>
           <li><a href="{% url 'history' %}">📜 Sotuvlar tarixi</a></li>
           <li>
-              <form method="post" action="{% url 'logout' %}" style="display: inline;">
+              <form method="post" action="{% url 'logout' %}">
                   {% csrf_token %}
-                  <button type="submit">
-                      🚪 Chiqish
-                  </button>
+                  <button type="submit">🚪 Chiqish</button>
               </form>
           </li>
       </ul>
   {% else %}
-      <p>Siz tizimga kirmagansiz.</p>
+      <p style="color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Siz tizimga kirmagansiz.</p>
       <a href="{% url 'login' %}">🔐 Login</a>
   {% endif %}
 </body>

@@ -60,7 +60,6 @@ def sell_product(request):
     return render(request, 'core/sell.html', {'products': products, 'message': message})
 
 @login_required
-@login_required
 def monitoring(request):
     shops = Shop.objects.all()
     shop_stats = []

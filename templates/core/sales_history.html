@@ -4,36 +4,147 @@
     <meta charset="UTF-8" />
     <title>Sotuvlar Tarixi</title>
     <style>
-        /* Oddiy styling */
+        /* Umumiy uslub */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4ff;
+            margin: 30px 40px;
+            color: #2c3e50;
+        }
+
+        nav {
+            margin-bottom: 25px;
+        }
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #2a7ae2;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #1a4db7;
+            text-decoration: underline;
+        }
+
+        h1 {
+            text-align: center;
+            color: #154c9a;
+            margin-bottom: 30px;
+            font-size: 2.4em;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Jadval asosiy uslubi */
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(42, 122, 226, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            font-size: 1.1em;
         }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
+        thead th {
+            background-color: #2a7ae2;
+            color: white;
+            padding: 15px 12px;
+            font-weight: 700;
             text-align: left;
         }
-        tr:hover {
-            background-color: #eef;
+        tbody tr.sale-row {
+            background: #f7faff;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 10px;
         }
-        .details {
+        tbody tr.sale-row:hover {
+            background-color: #d6e4ff;
+        }
+        tbody tr.details {
+            background: #e9f0ff;
+            font-style: italic;
+            color: #375aab;
             display: none;
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
+        }
+        tbody tr.details td {
+            padding: 15px 12px;
+            border-top: 1px solid #c3d0f7;
+        }
+
+        /* Jadval ustunlari uchun padding */
+        td {
+            padding: 15px 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                margin: 20px 15px;
+            }
+            nav a {
+                display: block;
+                margin-bottom: 12px;
+                font-size: 1.2em;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tbody tr.sale-row {
+                margin-bottom: 15px;
+                border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(42, 122, 226, 0.15);
+            }
+            tbody tr.details {
+                display: block !important;
+                font-style: normal;
+                background: #f9fbff;
+                color: #2a7ae2;
+                border-radius: 12px;
+                padding: 12px 20px;
+                margin-bottom: 20px;
+            }
+            tbody tr.details td {
+                border: none;
+                padding: 0;
+            }
+            tbody tr.sale-row td {
+                border: none;
+                padding-left: 15px;
+                position: relative;
+                text-align: left;
+            }
+            tbody tr.sale-row td:before {
+                position: absolute;
+                left: 10px;
+                top: 15px;
+                font-weight: 700;
+                color: #2a7ae2;
+                white-space: nowrap;
+            }
+            tbody tr.sale-row td:nth-of-type(1):before { content: "Mahsulot nomi"; }
+            tbody tr.sale-row td:nth-of-type(2):before { content: "Soni"; }
+            tbody tr.sale-row td:nth-of-type(3):before { content: "Sotilgan vaqt"; }
         }
     </style>
 </head>
 <body>
-    <nav style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <a href="{% url 'sell' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🛒 Sotish</a>
-        <a href="{% url 'monitoring' %}" style="text-decoration:none; color:#2a7ae2; font-weight:600;">📊 Monitoring</a>
-        <a href="{% url 'history' %}" style="margin-right: 15px; text-decoration:none; color:#2a7ae2; font-weight:600;">🏠 Tarix</a>
+    <nav>
+        <a href="{% url 'sell' %}">🛒 Sotish</a>
+        <a href="{% url 'monitoring' %}">📊 Monitoring</a>
+        <a href="{% url 'history' %}">🏠 Tarix</a>
     </nav>
+
     <h1>Sotuvlar Tarixi</h1>
+
     <table>
         <thead>
             <tr>
@@ -54,7 +165,6 @@
                     <b>Mahsulot narxi:</b> {{ sale.product.price }} <br/>
                     <b>Jami summa:</b> {{ sale.total_price }} <br/>
                     <b>Sotuv vaqti:</b> {{ sale.sold_at }} <br/>
-                    <!-- Qo'shimcha ma'lumotlar bo'lsa qo'shishingiz mumkin -->
                 </td>
             </tr>
             {% endfor %}
@@ -66,12 +176,13 @@
             row.addEventListener('click', () => {
                 const id = row.getAttribute('data-sale-id');
                 const detailRow = document.getElementById('details-' + id);
-                if (detailRow.style.display === 'table-row') {
+
+                if (detailRow.style.display === 'table-row' || detailRow.style.display === 'block') {
                     detailRow.style.display = 'none';
                 } else {
-                    // Oldin barcha detailslarni yopamiz
+                    // Barcha ochiq tafsilotlarni yopish
                     document.querySelectorAll('.details').forEach(d => d.style.display = 'none');
-                    detailRow.style.display = 'table-row';
+                    detailRow.style.display = window.innerWidth <= 600 ? 'block' : 'table-row';
                 }
             });
         });
